@@ -19,7 +19,7 @@ jobs:
         uses: actions/setup-java@v4.2.2
         with:
           java-version: '18'
-          distribution: 'adoptopenjdk'
+          distribution: 'termurin'
 
       - name: Build with maven
         run: mvn clean package -DskipTests
