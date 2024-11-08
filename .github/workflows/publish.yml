@@ -1,38 +1,34 @@
+# This workflow will build a package using Maven and then publish it to GitHub packages when a release is created
+# For more information see: https://github.com/actions/setup-java/blob/main/docs/advanced-usage.md#apache-maven-with-a-settings-path
 
-name: Publish to Github Packages
+name: Maven Package
 
 on:
-  push:
-    branches:
-      - master
-
+  release:
+    types: [created]
 
 jobs:
   build:
+
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup JDK
+      - uses: actions/checkout@v4
+      - name: Set up JDK
         uses: actions/setup-java@v4
         with:
           java-version: '18'
           distribution: 'temurin'
-          server-id: 'github'
-          settings-path: ${{ github.workspace }}
+          server-id: github # Value of the distributionManagement/repository/id field of the pom.xml
+          settings-path: ${{ github.workspace }} # location for the settings.xml file
 
+      - name: Build with Maven
+        run: mvn -B package --file pom.xml
 
-      - name: Build with maven
-        run: mvn clean package -DskipTests
-
-      - name: Publish to Github Packages
-        run: mvn deploy:deploy-file \
-          -Dfile=target/test-1.0.0.jar \
-          -DrepositoryId=github \
-          -Durl=https://maven.pkg.github.com/lavanchuan/Test_Dependency \
-          -DgroupId=com.chuan \
-          -Dversion=1.0.1
+      - name: Publish to GitHub Packages Apache Maven
+        run: mvn deploy -s $GITHUB_WORKSPACE/settings.xml
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ github.token }}
