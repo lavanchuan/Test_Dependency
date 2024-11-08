@@ -28,7 +28,7 @@ jobs:
         run: mvn deploy:deploy-file \
           -Dfile=target/test-1.0.0.jar \
           -DrepositoryId=github \
-          -Durl=https://maven.pkg.github.com/lavanchuan/test \
+          -Durl=https://maven.pkg.github.com/lavanchuan/Test_Dependency \
           -DgroupId=com.chuan \
           -Dversion=1.0.1
         env:
